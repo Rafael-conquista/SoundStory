@@ -1,6 +1,6 @@
 import express from 'express'
 import './src/database/db.js'
-import home from './src/routes/home.js'
+import user from './src/routes/user.js'
 
 class App{
     constructor() {
@@ -15,8 +15,7 @@ class App{
         }
 
     routes() {
-            this.app.use('/', home);
-            //this.app.use('/users');
+            this.app.use('/user', user);
     }
 }
 
