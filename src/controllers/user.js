@@ -55,6 +55,37 @@ class HomeController {
         res.status(500).json({ error: error.message });
       }
     }
+
+    async login(req, res) {
+      try {
+        const user = await User.findById(req.params.id);
+        if (user.logged){
+          return res.status(200).json({ message: " Usuário já se encontra logado "})
+        }
+        user.logged = true
+        user.save()
+        res.status(201).json({message: " Usuário logado com sucesso"});
+      } catch (error) {
+        res.status(400).json({ error: error.message });
+      }
+    }
+
+    async logoff(req, res) {
+      try {
+        const user = await User.findById(req.params.id);
+        if (!user.logged){
+          return res.status(200).json({ message: " Usuário já se encontra deslogado "})
+        }
+        user.logged = false
+        user.save()
+        res.status(201).json({ message: "Usuário deslogado" });
+      } catch (error) {
+        res.status(400).json({ error: error.message });
+      }
+    }
   }
+
+
+  
   
   export default new HomeController();
