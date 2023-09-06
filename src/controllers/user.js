@@ -24,7 +24,7 @@ class HomeController {
     async store(req, res) {
       try {
         const user = new User(req.body);
-        console.log(user)
+        !user.logged ? user.logged = true : user.logged
         await user.save();
         res.status(201).json(user);
       } catch (error) {
