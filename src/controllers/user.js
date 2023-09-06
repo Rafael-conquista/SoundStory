@@ -62,9 +62,12 @@ class HomeController {
         if (user.logged){
           return res.status(200).json({ message: " Usuário já se encontra logado "})
         }
-        user.logged = true
-        user.save()
-        res.status(201).json({message: " Usuário logado com sucesso"});
+        if (req.body.nome === user.nome  && req.body.senha === user.senha){
+          user.logged = true
+          user.save()
+          return res.status(201).json({message: " Usuário logado com sucesso"});
+        }
+        return res.status(403).json({message: "Nome e/ou senha incorreto(s)"})
       } catch (error) {
         res.status(400).json({ error: error.message });
       }
