@@ -26,7 +26,7 @@ class HomeController {
         const user = new User(req.body);
         !user.logged ? user.logged = true : user.logged
         await user.save();
-        res.status(201).json(user);
+        res.status(201).json({message: 'Usuário criado com sucesso'});
       } catch (error) {
         res.status(400).json({ error: error.message });
       }
@@ -58,16 +58,16 @@ class HomeController {
 
     async login(req, res) {
       try {
-        const user = await User.findById(req.params.id);
+        const user = await User.findOne({email: req.body.email});
         if (user.logged){
           return res.status(200).json({ message: " Usuário já se encontra logado "})
         }
-        if (req.body.nome === user.nome  && req.body.senha === user.senha){
+        if (req.body.email === user.email  && req.body.senha === user.senha){
           user.logged = true
           user.save()
           return res.status(201).json({message: " Usuário logado com sucesso"});
         }
-        return res.status(403).json({message: "Nome e/ou senha incorreto(s)"})
+        return res.status(403).json({message: "email e/ou senha incorreto(s)"})
       } catch (error) {
         res.status(400).json({ error: error.message });
       }
