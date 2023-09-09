@@ -1,4 +1,7 @@
+import { bcCompare } from '../utils/bcrypt_compare.js'
 import User from '../models/users.js';
+
+
 class HomeController {
     async index(req, res) {
       try {
@@ -59,10 +62,11 @@ class HomeController {
     async login(req, res) {
       try {
         const user = await User.findOne({email: req.body.email});
+        const compared_password = bcCompare(req.body.senha, user.senha)
         if (user.logged){
           return res.status(200).json({ message: " Usuário já se encontra logado "})
         }
-        if (req.body.email === user.email  && req.body.senha === user.senha){
+        if (req.body.email === user.email && compared_password){
           user.logged = true
           user.save()
           return res.status(201).json({message: " Usuário logado com sucesso"});
