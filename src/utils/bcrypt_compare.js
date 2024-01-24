@@ -1,4 +1,3 @@
-import User from '../models/users.js';
 import bcrypt from 'bcrypt'
 
 export async function bcCompare(client_password, bd_password_hash){

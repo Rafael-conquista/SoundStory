@@ -1,4 +1,6 @@
 import { bcCompare } from '../utils/bcrypt_compare.js'
+import { jwt_sign } from '../utils/jwt_utils.js';
+import { jwt_verify } from '../utils/jwt_utils.js';
 import User from '../models/users.js';
 
 
@@ -61,14 +63,19 @@ class UserController {
 
   async login(req, res) {
     try {
-      const user = await User.findOne({ email: req.body.email });
+      const email = req.body.email
+      const user = await User.findOne({ email: email });
       const compared_password = bcCompare(req.body.senha, user.senha)
       if (user.logged) {
         return res.status(200).json({ message: " Usuário já se encontra logado " })
       }
       if (req.body.email === user.email && compared_password) {
+        const token = jwt_sign(email)
+        //const teste = jwt_verify('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RlMkB0ZXN0ZS5jb20iLCJpYXQiOjE3MDYxMzc1ODIsImV4cCI6MTcwNjEzNzY0Mn0.o1LocIbXi777KrphvH56gMcicEmm-Tdto_M7-BDCsMw')
+        //adicionar este trecho de código quando for preciso verificar o token
         user.logged = true
         user.save()
+        res.header('Authorization', `Bearer ${token}`);
         return res.status(201).json({ message: " Usuário logado com sucesso" });
       }
       return res.status(403).json({ message: "email e/ou senha incorreto(s)" })
