@@ -71,7 +71,7 @@ class UserController {
       }
       if (req.body.email === user.email && compared_password) {
         const token = jwt_sign(email)
-        //const teste = jwt_verify('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RlMkB0ZXN0ZS5jb20iLCJpYXQiOjE3MDYxMzc1ODIsImV4cCI6MTcwNjEzNzY0Mn0.o1LocIbXi777KrphvH56gMcicEmm-Tdto_M7-BDCsMw')
+        const teste = jwt_verify(token)
         //adicionar este trecho de código quando for preciso verificar o token
         user.logged = true
         user.save()
