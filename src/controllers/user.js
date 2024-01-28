@@ -1,4 +1,4 @@
-import { bcCompare } from '../utils/bcrypt_compare.js'
+import { bcCompare, decrypt_password } from '../utils/password_crypt.js'
 import { jwt_sign } from '../utils/jwt_utils.js';
 import { jwt_verify } from '../utils/jwt_utils.js';
 import User from '../models/users.js';
@@ -65,7 +65,11 @@ class UserController {
     try {
       const email = req.body.email
       const user = await User.findOne({ email: email });
-      const compared_password = bcCompare(req.body.senha, user.senha)
+
+      const decrypted_password = decrypt_password(req.body.senha)
+
+      const compared_password = await bcCompare(decrypted_password, user.senha);
+
       if (user.logged) {
         return res.status(200).json({ message: " Usuário já se encontra logado " })
       }

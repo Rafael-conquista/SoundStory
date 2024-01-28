@@ -14,7 +14,6 @@ export function jwt_verify(token){
           return false
         }
         const teste = is_token_expiring(token)
-        console.log(teste)
         return true
     });
 }
