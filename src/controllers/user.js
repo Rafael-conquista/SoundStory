@@ -29,7 +29,7 @@ class UserController {
   async store(req, res) {
     try {
       const user = new User(req.body);
-      !user.logged ? user.logged = true : user.logged
+      user.logged = false
       await user.save();
       res.status(201).json({ message: 'Usuário criado com sucesso' });
     } catch (error) {
@@ -80,7 +80,10 @@ class UserController {
         user.logged = true
         user.save()
         res.header('Authorization', `Bearer ${token}`);
-        return res.status(201).json({ message: " Usuário logado com sucesso" });
+        return res.status(200).json({
+          message: " Usuário logado com sucesso",
+          'id':user.id
+        });
       }
       return res.status(403).json({ message: "email e/ou senha incorreto(s)" })
     } catch (error) {
