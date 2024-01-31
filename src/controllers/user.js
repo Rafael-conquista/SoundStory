@@ -2,6 +2,7 @@ import { bcCompare, decrypt_password } from '../utils/password_crypt.js'
 import { jwt_sign } from '../utils/jwt_utils.js';
 import { jwt_verify } from '../utils/jwt_utils.js';
 import User from '../models/users.js';
+import { decode } from 'jsonwebtoken';
 
 
 class UserController {
@@ -75,14 +76,13 @@ class UserController {
       }
       if (req.body.email === user.email && compared_password) {
         const token = jwt_sign(email)
-        const teste = jwt_verify(token)
-        //adicionar este trecho de código quando for preciso verificar o token
         user.logged = true
         user.save()
         res.header('Authorization', `Bearer ${token}`);
         return res.status(200).json({
           message: " Usuário logado com sucesso",
-          'id':user.id
+          'id': user.id,
+          'token': token
         });
       }
       return res.status(403).json({ message: "email e/ou senha incorreto(s)" })
@@ -99,12 +99,40 @@ class UserController {
       }
       user.logged = false
       user.save()
-      res.status(201).json({ message: "Usuário deslogado" });
+      res.status(200).json({ message: "Usuário deslogado" });
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
   }
+
+  async verify_token(req, res) {
+    try {
+      const decoded = jwt_verify(req.body.token)
+      const email = decoded.infos.email
+      console.log(decoded.infos.email)
+      res.status(200).json({ "email": email });
+    } catch {
+      res.status(401).json({ message: "token inválido" })
+    }
+  }
+
+  async get_id_by_jwt(req, res){
+    try{
+      const decoded = jwt_verify(req.body.token)
+      if(decoded.available == true){
+        const email = decoded.infos.email
+        const user = await User.findOne({ email: email }).select('id nome');
+        res.status(200).json(user)
+      }else{
+        throw new Error('token inválido')
+      }
+    }catch(error){
+      res.status(401).json({ message: error })
+    }
+  }
 }
+
+
 
 
 export default new UserController();
