@@ -10,7 +10,6 @@ router.post('/', userController.store);
 router.put('/:id', userController.update);
 router.delete('/:id', userController.delete);
 router.post('/login/', userController.login);
-router.post('/logoff/:id', userController.logoff);
 router.post('/verify', userController.get_id_by_jwt)
 
 export default router;

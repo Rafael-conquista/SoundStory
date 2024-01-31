@@ -71,12 +71,8 @@ class UserController {
 
       const compared_password = await bcCompare(decrypted_password, user.senha);
 
-      if (user.logged) {
-        return res.status(200).json({ message: " Usuário já se encontra logado " })
-      }
       if (req.body.email === user.email && compared_password) {
         const token = jwt_sign(email)
-        user.logged = true
         user.save()
         res.header('Authorization', `Bearer ${token}`);
         return res.status(200).json({
@@ -86,20 +82,6 @@ class UserController {
         });
       }
       return res.status(403).json({ message: "email e/ou senha incorreto(s)" })
-    } catch (error) {
-      res.status(400).json({ error: error.message });
-    }
-  }
-
-  async logoff(req, res) {
-    try {
-      const user = await User.findById(req.params.id);
-      if (!user.logged) {
-        return res.status(200).json({ message: " Usuário já se encontra deslogado " })
-      }
-      user.logged = false
-      user.save()
-      res.status(200).json({ message: "Usuário deslogado" });
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
