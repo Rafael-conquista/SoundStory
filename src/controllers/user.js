@@ -66,7 +66,14 @@ class UserController {
     try {
       const email = req.body.email
       const user = await User.findOne({ email: email });
-
+      if (!user){
+        return res.status(401).json(
+          {
+            message: "email e/ou senha incorreto(s)"
+          }
+        )
+      }
+        
       const decrypted_password = decrypt_password(req.body.senha)
 
       const compared_password = await bcCompare(decrypted_password, user.senha);
